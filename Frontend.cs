@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace VisualiazdorLogica
@@ -33,6 +30,8 @@ namespace VisualiazdorLogica
                 treeView1.Nodes.Clear();
                 LiteralVariables.Map.Clear();
                 dataGridView1.DataSource = null;
+                pictureBox1.Image?.Dispose();
+                pictureBox1.Image = null;
                 return;
             }
 
@@ -70,6 +69,7 @@ namespace VisualiazdorLogica
                 toolStripStatusLabel2.Text = string.Format("{2}Nodos: {0} Operadores Binarios: {1}",
                     recursiveCount(_rootNode, node => true), recursiveCount(_rootNode, node => node is BinaryNode), conectivoPrincipal);
                 refreshTreeView();
+                refreshChart();
                 dataGridView1.DataSource = new Dictionary<string, bool>(LiteralVariables.Map).Select(pair => new VariableDataView()
                 {
                     Nombre = pair.Key,
@@ -141,9 +141,42 @@ namespace VisualiazdorLogica
             treeView1.ExpandAll();
         }
 
+        private void refreshChart()
+        {
+            if (_rootNode == null)
+                return;
+
+            var rootNode = new ChartNode(_rootNode.Prettify());
+
+            if (_rootNode.Children != null)
+                foreach (var child in _rootNode.Children)
+                {
+                    recursiveAddChartNode(child, rootNode);
+                }
+
+            var bitmap = OrganizationChart.Generate(rootNode, pictureBox1.Width);
+
+            pictureBox1.Image?.Dispose();
+            pictureBox1.Image = bitmap;
+        }
+
+        private void recursiveAddChartNode(INode node, ChartNode parent)
+        {
+            var ourNode = new ChartNode(node.Prettify());
+
+            if (node.Children != null)
+            foreach (var child in node.Children)
+            {
+                recursiveAddChartNode(child, ourNode);
+            }
+
+            parent.Children.Add(ourNode);
+        }
+
         private void Frontend_Resize(object sender, EventArgs e)
         {
             tabControl1.ItemSize = new Size(tabControl1.Size.Width / tabControl1.TabCount - 2, tabControl1.ItemSize.Height);
+            refreshChart();
         }
         
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -151,6 +184,10 @@ namespace VisualiazdorLogica
             if (tabControl1.SelectedIndex == 1) // Tree view
             {
                 refreshTreeView();
+            }
+            else if (tabControl1.SelectedIndex == 0)
+            {
+                refreshChart();
             }
         }
 

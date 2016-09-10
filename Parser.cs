@@ -111,7 +111,8 @@ namespace VisualiazdorLogica
                                         simplifiedInput.GetRange(position + 1, simplifiedInput.Count - position - 1))));
                     }
 
-                    if (simplifiedInput.Count(txt => txt == simplifiedInput[position]) > 1)
+                    if (simplifiedInput.Count(txt => txt.Length == 1 &&
+                        Characters.GetLevel(txt[0]) == Characters.GetLevel(simplifiedInput[position][0])) > 1)
                     {
                         throw new FormatException("Ambiguo operador: " + simplifiedInput[position]);
                     }

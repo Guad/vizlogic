@@ -1,6 +1,4 @@
-﻿using System.Windows.Documents;
-
-namespace VisualiazdorLogica
+﻿namespace VisualiazdorLogica
 {
     // Interfaces
     public interface INode

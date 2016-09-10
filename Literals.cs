@@ -117,6 +117,23 @@ namespace VisualiazdorLogica
         public const char True = 'T';
         public const char False = 'F';
 
+        public static int GetLevel(char operand)
+        {
+            switch (operand)
+            {
+                default:
+                    return 0;
+                case Biconditional:
+                case Conditional:
+                    return 3;
+                case And:
+                case Or:
+                    return 2;
+                case Not:
+                    return 1;
+            }
+        }
+
         // Ordenado por el Convenio de Precedencia
         public static readonly char[] Operators = new[]
         {
@@ -139,5 +156,4 @@ namespace VisualiazdorLogica
             LeftParent
         };
     }
-
 }
