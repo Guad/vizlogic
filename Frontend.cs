@@ -12,6 +12,7 @@ namespace VisualiazdorLogica
         {
             InitializeComponent();
             _parser = new DotNetParser();
+            // Dividimos equitativamente el tamaño de los tabs
             tabControl1.ItemSize = new Size(tabControl1.Size.Width / tabControl1.TabCount - 2, tabControl1.ItemSize.Height);
         }
 
@@ -21,6 +22,9 @@ namespace VisualiazdorLogica
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
+            // Texto ha cambiado.
+
+            // Se ha eliminado todo. Restauramos el estado original.
             if (richTextBox1.TextLength == 0)
             {
                 richTextBox1.BackColor = Color.White;
@@ -35,6 +39,8 @@ namespace VisualiazdorLogica
                 return;
             }
 
+            // Cuando cambiamos el texto desde codigo, el cursor se mueve al principio.
+            // Asi que tenemos que guardar su posicion y ponerlo ahi nosotros.
             var cursor = richTextBox1.SelectionStart;
             richTextBox1.Text = Util.Sanitize(richTextBox1.Text);
             richTextBox1.SelectionStart = cursor;
@@ -44,6 +50,7 @@ namespace VisualiazdorLogica
 
             try
             {
+                // Parseamos la entrada.
                 newNode = _parser.Parse(richTextBox1.Text);
             }
             catch(Exception ex)
@@ -52,6 +59,7 @@ namespace VisualiazdorLogica
                 exception = ex;
             }
 
+            // No hay error.
             if (newNode != null)
             {
                 _rootNode = newNode;
@@ -60,12 +68,14 @@ namespace VisualiazdorLogica
 
                 string conectivoPrincipal = "";
 
+                // Solo existen conectivos principales si el nodo raiz es un nodo binario.
                 if (_rootNode is BinaryNode)
                 {
                     conectivoPrincipal = string.Format("Conectivo Principal: {0} ", ((BinaryNode) _rootNode).Operator.ToString());
                 }
 
                 toolStripStatusLabel1.Text = "Formula proposicional correcta!";
+                // Contamos recursivamente
                 toolStripStatusLabel2.Text = string.Format("{2}Nodos: {0} Operadores Binarios: {1}",
                     recursiveCount(_rootNode, node => true), recursiveCount(_rootNode, node => node is BinaryNode), conectivoPrincipal);
                 refreshTreeView();
@@ -83,16 +93,8 @@ namespace VisualiazdorLogica
                 toolStripStatusLabel1.Text = "Error: " + exception?.Message;
             }
         }
-
-        private void onDataChange()
-        {
-            dataGridView1.DataSource = new Dictionary<string, bool>(LiteralVariables.Map).Select(pair => new VariableDataView()
-            {
-                Nombre = pair.Key,
-                Estado = pair.Value,
-            }).ToList();
-        }
-
+        
+        // Cuenta recursiva
         private int recursiveCount(INode node, Func<INode, bool> predicate)
         {
             int mainCounter = 0;
@@ -100,15 +102,13 @@ namespace VisualiazdorLogica
             if (predicate(node)) mainCounter++;
 
             if (node.Children != null)
-            foreach (var child in node.Children)
-            {
-                mainCounter += recursiveCount(child, predicate);
-            }
+                mainCounter += node.Children.Sum(child => recursiveCount(child, predicate));
 
             return mainCounter;
         }
 
-        private TreeNode addTreeNode(INode node, TreeNode parent)
+        // Añadimos nodos a la vista arbol recursivamente
+        private void addTreeNode(INode node, TreeNode parent)
         {
             var ourNode = parent.Nodes.Add(node.Prettify() +
                 string.Format(" [{0}]", node.Evaluate() ? "Verdad" : "Falso"));
@@ -118,13 +118,14 @@ namespace VisualiazdorLogica
                 {
                     addTreeNode(child, ourNode);
                 }
-
-            return ourNode;
         }
 
+        // refrescar la vista arbol
         private void refreshTreeView()
         {
             if (_rootNode == null) return;
+
+            // primero limpiamos la vista.
             treeView1.Nodes.Clear();
 
             var rootNode = new TreeNode(Util.Prettify(richTextBox1.Text) +
@@ -141,6 +142,7 @@ namespace VisualiazdorLogica
             treeView1.ExpandAll();
         }
 
+        // Redraw la vista chart
         private void refreshChart()
         {
             if (_rootNode == null)
@@ -156,6 +158,7 @@ namespace VisualiazdorLogica
 
             var bitmap = OrganizationChart.Generate(rootNode, pictureBox1.Width);
 
+            // liberamos los recursor y ponemos nuestra nueva imagen.
             pictureBox1.Image?.Dispose();
             pictureBox1.Image = bitmap;
         }
@@ -173,12 +176,16 @@ namespace VisualiazdorLogica
             parent.Children.Add(ourNode);
         }
 
+        // Cuando el usuario cambia el tamaño de la ventama, 
+        // Dividimos equitativamente el tamaño de los tabs y
+        // Redibujamos el chart para usar el maximo espacio posible
         private void Frontend_Resize(object sender, EventArgs e)
         {
             tabControl1.ItemSize = new Size(tabControl1.Size.Width / tabControl1.TabCount - 2, tabControl1.ItemSize.Height);
             refreshChart();
         }
         
+        // Redibujamos las vistas en el caso de que cambien las variables.
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (tabControl1.SelectedIndex == 1) // Tree view
@@ -191,6 +198,7 @@ namespace VisualiazdorLogica
             }
         }
 
+        // Una pequeña ayuda.
         private void Frontend_HelpRequested(object sender, HelpEventArgs hlpevent)
         {
             string helpText = "";

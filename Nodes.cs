@@ -1,6 +1,6 @@
 ﻿namespace VisualiazdorLogica
 {
-    // Interfaces
+    // Interfaz de un nodo. Puede tener varios o ningun hijos. 
     public interface INode
     {
         int ChildNumber { get; }
@@ -10,6 +10,7 @@
         string Prettify();
     }
 
+    // Cualquier variable, como 'p', 'q', 's', etc
     public class VariableNode : INode
     {
         public string Key;
@@ -36,6 +37,7 @@
         }
     }
 
+    // Literal T(rue) o F(alse)
     public class LiteralNode : INode
     {
         public bool Value;
@@ -61,6 +63,7 @@
         }
     }
 
+    // Nodo binario con un operador
     public class BinaryNode : INode
     {
         public IBinaryOperator Operator { get; set; }
@@ -90,6 +93,7 @@
         }
     }
 
+    // Nodo NOT
     public class NotNode : INode
     {
         public NotNode(INode child)
@@ -110,6 +114,8 @@
 
         public string Prettify()
         {
+            // Solo añadimos paréntesis si el nodo hijo es un nodo binario
+            // Para evitar cosas como ~(~(~(~(~(~(~(p))))))))
             bool parenthesis = Children[0] is BinaryNode;
 
             if (parenthesis) return string.Format("{0}({1})", Characters.Not, Children[0].Prettify());

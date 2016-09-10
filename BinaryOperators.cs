@@ -1,9 +1,10 @@
 ﻿namespace VisualiazdorLogica
 {
+    // Interfaz de un operador binario.
     public interface IBinaryOperator
     {
         bool Evaluate(bool left, bool right);
-        string ToString();
+        string ToString(); // Devuelve el caracter del operador como cadena
     }
 
     public class AndOperation : IBinaryOperator

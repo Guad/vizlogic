@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace VisualiazdorLogica
 {
+    // Sigue todas las variables que ha introducido el usuario.
     public static class LiteralVariables
     {
         public static Dictionary<string, bool> Map = new Dictionary<string, bool>();
@@ -31,7 +32,7 @@ namespace VisualiazdorLogica
         public static bool Get(string key)
         {
             //if (_map.ContainsKey(key))
-            // Force throw exception
+            // Excepción debe ser lanzada y capturada
 
             return Map[key];
         }
@@ -39,6 +40,7 @@ namespace VisualiazdorLogica
 
     public static class Util
     {
+        // Quita los parentesis y sustituye los caracteres
         public static string Prettify(string node)
         {
             node = Sanitize(node);
@@ -47,6 +49,8 @@ namespace VisualiazdorLogica
             return node;
         }
 
+        // Sustituye los caracteres por los nuestros, para que el usuario no tenga que copiar y pegar
+        // de una pagina de unicode.
         public static string Sanitize(string input, bool removeWhitespace = true)
         {
             string output = input;
@@ -63,27 +67,29 @@ namespace VisualiazdorLogica
             return output;
         }
 
+        // Quita todos los caracteres dados del string value
         public static string Strip(this string value, char[] characters)
         {
             string output = value;
             for (int i = 0; i < characters.Length; i++)
             {
-                output = output.Replace(characters[i]+"", "");
+                output = output.Replace(characters[i].ToString(), "");
             }
             return output;
         }
 
-        // Returns whether it had semantic parenthesis.
+        // Devuelve si tenía o no paréntesis semánticos.
         public static bool RemoveOuterParenthesis(this string value, out string output)
         {
             output = value;
-
+            // Si esta vacío o no tiene parentesis fuera, lo devolvemos.
             if (string.IsNullOrWhiteSpace(value)) return false;
             if (value[0] != Characters.LeftParent || value[value.Length - 1] != Characters.RightParent) return false;
 
             int level = 0;
             for (int i = 0; i < value.Length; i++)
             {
+                // Por cada parentesis que nos encontramos, entramos en un nivel
                 if (value[i] == Characters.LeftParent)
                 {
                     level++;
@@ -92,13 +98,14 @@ namespace VisualiazdorLogica
                 {
                     level--;
 
-                    // The outer parenthesis belong to a group inside
+                    // Los paréntesis de fuera pertenecen a un grupo dentro.
                     // e.g. (p^q) V (r^s)
                     if (level == 0 && i != value.Length - 1)
                         return false;
                 }
             }
 
+            // Devolvemos el string sin los parentesis
             output = value.Substring(1, value.Length - 2);
             return true;
         }
@@ -117,6 +124,7 @@ namespace VisualiazdorLogica
         public const char True = 'T';
         public const char False = 'F';
 
+        // Convenio de precedencia.
         public static int GetLevel(char operand)
         {
             switch (operand)
