@@ -23,7 +23,8 @@ namespace VisualiazdorLogica
             {
                 strSize = g.MeasureString(root.Text, txtFont);
                 // Dibujamos nuestro nodo en medio de la imagen
-                g.DrawRectangle(Pens.Black, width / 2 - strSize.Width / 2 - 5, 5, strSize.Width + 10, strSize.Height + 10);
+                g.FillRectangle(root.State ? Brushes.Green : Brushes.Red, width / 2 - strSize.Width / 2 - 5, 5, strSize.Width + 10, strSize.Height + 10);
+                g.DrawRectangle(Pens.DarkGray, width / 2 - strSize.Width / 2 - 5, 5, strSize.Width + 10, strSize.Height + 10);
                 g.DrawString(root.Text, txtFont, Brushes.Black, width / 2 - strSize.Width / 2, 10);
             }
 
@@ -69,13 +70,15 @@ namespace VisualiazdorLogica
 
     public class ChartNode
     {
-        public ChartNode(string txt)
+        public ChartNode(string txt, bool state)
         {
             Text = txt;
+            State = state;
             Children = new List<ChartNode>();
         }
 
         public string Text { get; set; }
         public List<ChartNode> Children { get; set; }
+        public bool State;
     }
 }

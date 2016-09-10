@@ -148,7 +148,7 @@ namespace VisualiazdorLogica
             if (_rootNode == null)
                 return;
 
-            var rootNode = new ChartNode(_rootNode.Prettify());
+            var rootNode = new ChartNode(_rootNode.Prettify(), _rootNode.Evaluate());
 
             if (_rootNode.Children != null)
                 foreach (var child in _rootNode.Children)
@@ -165,7 +165,7 @@ namespace VisualiazdorLogica
 
         private void recursiveAddChartNode(INode node, ChartNode parent)
         {
-            var ourNode = new ChartNode(node.Prettify());
+            var ourNode = new ChartNode(node.Prettify(), node.Evaluate());
 
             if (node.Children != null)
             foreach (var child in node.Children)
