@@ -36,6 +36,7 @@ namespace VisualiazdorLogica
                 dataGridView1.DataSource = null;
                 pictureBox1.Image?.Dispose();
                 pictureBox1.Image = null;
+                _rootNode = null;
                 return;
             }
 
