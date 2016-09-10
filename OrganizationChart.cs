@@ -25,7 +25,7 @@ namespace VisualiazdorLogica
                 // Dibujamos nuestro nodo en medio de la imagen
                 g.FillRectangle(root.State ? Brushes.Green : Brushes.Red, width / 2 - strSize.Width / 2 - 5, 5, strSize.Width + 10, strSize.Height + 10);
                 g.DrawRectangle(Pens.DarkGray, width / 2 - strSize.Width / 2 - 5, 5, strSize.Width + 10, strSize.Height + 10);
-                g.DrawString(root.Text, txtFont, Brushes.Black, width / 2 - strSize.Width / 2, 10);
+                g.DrawString(root.Text, txtFont, Brushes.White, width / 2 - strSize.Width / 2, 10);
             }
 
             // Recogemos las imagenes de nuestros hijos en un array diferente, para conocer la altura maxima
