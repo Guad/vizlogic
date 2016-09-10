@@ -114,11 +114,6 @@
 
         public string Prettify()
         {
-            // Solo añadimos paréntesis si el nodo hijo es un nodo binario
-            // Para evitar cosas como ~(~(~(~(~(~(~(p))))))))
-            bool parenthesis = Children[0] is BinaryNode;
-
-            if (parenthesis) return string.Format("{0}({1})", Characters.Not, Children[0].Prettify());
             return Characters.Not + Children[0].Prettify();
         }
     }
