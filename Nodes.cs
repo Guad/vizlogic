@@ -10,6 +10,11 @@
         string Prettify();
     }
 
+    public interface ISimplifiable
+    {
+        INode Simplify();
+    }
+
     // Cualquier variable, como 'p', 'q', 's', etc
     public class VariableNode : INode
     {
@@ -64,37 +69,101 @@
     }
 
     // Nodo binario con un operador
-    public class BinaryNode : INode
+    public abstract class BinaryNode : INode
     {
-        public IBinaryOperator Operator { get; set; }
+        public abstract char OperationCharacter { get; }
 
-        public BinaryNode(IBinaryOperator op, INode left, INode right)
+        public BinaryNode(INode left, INode right)
         {
-            Operator = op;
             Children = new INode[2];
             Children[0] = left;
             Children[1] = right;
         }
 
-        public BinaryNode() : this(null, null, null)
-        { }
+        //public BinaryNode() : this(null, null) { }
 
         public int ChildNumber => 2;
         public INode[] Children { get; set; }
 
-        public bool Evaluate()
-        {
-            return Operator.Evaluate(Children[0].Evaluate(), Children[1].Evaluate());
-        }
+        public abstract bool Evaluate();
 
         public string Prettify()
         {
-            return string.Format("({0}{2}{1})", Children[0].Prettify(), Children[1].Prettify(), Operator.ToString());
+            return string.Format("({0}{2}{1})", Children[0].Prettify(), Children[1].Prettify(), OperationCharacter);
         }
     }
 
+    #region BinaryNodes
+
+    public class AndNode : BinaryNode
+    {
+        public AndNode(INode left, INode right) : base(left, right)
+        { }
+
+        public override char OperationCharacter => Characters.And;
+
+        public override bool Evaluate()
+        {
+            return Children[0].Evaluate() && Children[1].Evaluate();
+        }
+    }
+
+    public class OrNode : BinaryNode
+    {
+        public OrNode(INode left, INode right) : base(left, right)
+        { }
+
+        public override char OperationCharacter => Characters.Or;
+
+        public override bool Evaluate()
+        {
+            return Children[0].Evaluate() || Children[1].Evaluate();
+        }
+    }
+
+    public class ConditionalNode : BinaryNode, ISimplifiable
+    {
+        public ConditionalNode(INode left, INode right) : base(left, right)
+        { }
+
+        public override char OperationCharacter => Characters.Conditional;
+
+        public override bool Evaluate()
+        {
+            return !Children[0].Evaluate() || Children[1].Evaluate();
+        }
+
+        public INode Simplify()
+        {
+            return new OrNode(new NotNode(Children[0]), Children[1]);
+        }
+    }
+
+    public class BiconditionalNode : BinaryNode, ISimplifiable
+    {
+        public BiconditionalNode(INode left, INode right) : base(left, right)
+        { }
+
+        public override char OperationCharacter => Characters.Biconditional;
+
+        public override bool Evaluate()
+        {
+            return !(Children[0].Evaluate() ^ Children[1].Evaluate());
+        }
+
+        public INode Simplify()
+        {
+            return new OrNode(
+                new AndNode(Children[0], Children[1]),
+                new AndNode(new NotNode(Children[0]), new NotNode(Children[1]))
+                );
+        }
+    }
+
+    #endregion
+
     // Nodo NOT
-    public class NotNode : INode
+    public class NotNode : INode, ISimplifiable
     {
         public NotNode(INode child)
         {
@@ -115,6 +184,28 @@
         public string Prettify()
         {
             return Characters.Not + Children[0].Prettify();
+        }
+
+        public INode Simplify()
+        {
+            if (Children[0] is ISimplifiable) Children[0] = ((ISimplifiable) Children[0]).Simplify();
+
+            if (Children[0] is BinaryNode)
+            {
+                var bin = Children[0] as BinaryNode;
+
+                if (Children[0] is AndNode)
+                    return new OrNode(new NotNode(bin.Children[0]), new NotNode(bin.Children[1]));
+                if (Children[0] is OrNode)
+                    return new AndNode(new NotNode(bin.Children[0]), new NotNode(bin.Children[1]));
+            }
+
+            if (Children[0] is NotNode)
+            {
+                return Children[0].Children[0];
+            }
+
+            return this;
         }
     }
 }

@@ -53,7 +53,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinaryOperators.cs" />
     <Compile Include="Frontend.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -61,6 +60,7 @@
       <DependentUpon>Frontend.cs</DependentUpon>
     </Compile>
     <Compile Include="Literals.cs" />
+    <Compile Include="Tableaux.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Nodes.cs" />

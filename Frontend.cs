@@ -72,7 +72,7 @@ namespace VisualiazdorLogica
                 // Solo existen conectivos principales si el nodo raiz es un nodo binario.
                 if (_rootNode is BinaryNode)
                 {
-                    conectivoPrincipal = string.Format("Conectivo Principal: {0} ", ((BinaryNode) _rootNode).Operator.ToString());
+                    conectivoPrincipal = string.Format("Conectivo Principal: {0} ", ((BinaryNode) _rootNode).OperationCharacter);
                 }
 
                 toolStripStatusLabel1.Text = "Formula proposicional correcta!";
@@ -81,6 +81,7 @@ namespace VisualiazdorLogica
                     recursiveCount(_rootNode, node => true), recursiveCount(_rootNode, node => node is BinaryNode), conectivoPrincipal);
                 refreshTreeView();
                 refreshChart();
+                refreshSimplifiedChart();
                 dataGridView1.DataSource = new Dictionary<string, bool>(LiteralVariables.Map).Select(pair => new VariableDataView()
                 {
                     Nombre = pair.Key,
@@ -164,6 +165,43 @@ namespace VisualiazdorLogica
             pictureBox1.Image = bitmap;
         }
 
+        private void refreshSimplifiedChart()
+        {
+            if (_rootNode == null)
+                return;
+
+            INode simpleNode = SimplifyNode(_rootNode);
+
+            var rootNode = new ChartNode(simpleNode.Prettify(), simpleNode.Evaluate());
+
+            if (simpleNode.Children != null)
+                foreach (var child in simpleNode.Children)
+                {
+                    recursiveAddChartNode(child, rootNode);
+                }
+
+            var bitmap = OrganizationChart.Generate(rootNode, simplePictureBox.Width);
+
+            // liberamos los recursor y ponemos nuestra nueva imagen.
+            simplePictureBox.Image?.Dispose();
+            simplePictureBox.Image = bitmap;
+        }
+
+        private INode SimplifyNode(INode node)
+        {
+            if (node is ISimplifiable)
+            {
+                node = ((ISimplifiable) node).Simplify();
+            }
+
+            for (int i = 0; i < node.ChildNumber; i++)
+            {
+                node.Children[i] = SimplifyNode(node.Children[i]);
+            }
+
+            return node;
+        }
+
         private void recursiveAddChartNode(INode node, ChartNode parent)
         {
             var ourNode = new ChartNode(node.Prettify(), node.Evaluate());
@@ -184,6 +222,7 @@ namespace VisualiazdorLogica
         {
             tabControl1.ItemSize = new Size(tabControl1.Size.Width / tabControl1.TabCount - 2, tabControl1.ItemSize.Height);
             refreshChart();
+            refreshSimplifiedChart();
         }
         
         // Redibujamos las vistas en el caso de que cambien las variables.
@@ -196,6 +235,10 @@ namespace VisualiazdorLogica
             else if (tabControl1.SelectedIndex == 0)
             {
                 refreshChart();
+            }
+            else if (tabControl1.SelectedIndex == 3)
+            {
+                refreshSimplifiedChart();
             }
         }
 

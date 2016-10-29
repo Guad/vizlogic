@@ -40,6 +40,8 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.simplePictureBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -51,6 +53,8 @@
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.statusStrip1.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.simplePictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -92,6 +96,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.ItemSize = new System.Drawing.Size(100, 18);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
@@ -188,6 +193,26 @@
             this.toolStripStatusLabel2.Size = new System.Drawing.Size(0, 17);
             this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.simplePictureBox);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(780, 387);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Simplificado";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // simplePictureBox
+            // 
+            this.simplePictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.simplePictureBox.Location = new System.Drawing.Point(3, 3);
+            this.simplePictureBox.Name = "simplePictureBox";
+            this.simplePictureBox.Size = new System.Drawing.Size(774, 381);
+            this.simplePictureBox.TabIndex = 0;
+            this.simplePictureBox.TabStop = false;
+            // 
             // Frontend
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -214,6 +239,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.simplePictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -233,5 +260,7 @@
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.PictureBox simplePictureBox;
     }
 }

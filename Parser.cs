@@ -126,30 +126,25 @@ namespace VisualiazdorLogica
                         throw new FormatException("Ambiguo operador: " + simplifiedInput[position]);
                     }
 
-                    IBinaryOperator binop = null;
+                    INode left = Parse(string.Join("", simplifiedInput.GetRange(0, position)));
+                    INode right =
+                        Parse(string.Join("",
+                            simplifiedInput.GetRange(position + 1, simplifiedInput.Count - position - 1)));
 
                     // Determinamos el operador
+                    // devolvemos el nodo operador con todo a su derecha como el primer hijo
+                    // y todo a su izquierda como su segundo hijo.
                     switch (simplifiedInput[position][0])
                     {
                         case Characters.Biconditional:
-                            binop = new BiconditionalOperation();
-                            break;
+                            return new BiconditionalNode(left, right);
                         case Characters.Conditional:
-                            binop = new ConditionalOperation();
-                            break;
+                            return new ConditionalNode(left, right);
                         case Characters.And:
-                            binop = new AndOperation();
-                            break;
+                            return new AndNode(left, right);
                         case Characters.Or:
-                            binop = new OrOperation();
-                            break;
+                            return new OrNode(left, right);
                     }
-
-                    // devolvemos el nodo operador con todo a su derecha como el primer hijo
-                    // y todo a su izquierda como su segundo hijo.
-                    return new BinaryNode(binop,
-                                Parse(string.Join("", simplifiedInput.GetRange(0, position))),
-                                Parse(string.Join("", simplifiedInput.GetRange(position + 1, simplifiedInput.Count - position - 1))));
                 }
             }
             // Esto puede pasar cuando en nuestro nivel no hay ni literales ni operadores
